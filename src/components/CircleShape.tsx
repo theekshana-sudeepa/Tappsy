@@ -1,34 +1,37 @@
-import { View } from "react-native";
+import { View } from "react-native"
 
-interface Circle {
-    width: number;
-    hieght: number;
-    borderRadius: number;
-    fillColor?: string;
-    className?: string;
-    topValue?: number;
-    bottomValue?: number;
-    leftValue?: number;
-    rightValue?: number;
+interface CircleShapeProps {
+  width: number
+  hieght: number // keeping the typo from original for compatibility
+  fillColor?: string
+  borderRadius: number
+  topValue: number
+  leftValue: number
+  className?: string
 }
 
-export default function CircleShape(c: Circle) {
-    return (
-        <View className={`${c.className ??""}`}
-
-            style={{
-                width: c.width,
-                height: c.hieght,
-                borderRadius: c.borderRadius,
-                position: 'absolute',
-                ...(c.fillColor !== undefined && { backgroundColor: c.fillColor }),
-                ...(c.topValue !== undefined && { top: c.topValue }),
-                ...(c.bottomValue !== undefined && { bottom: c.bottomValue }),
-                ...(c.leftValue !== undefined && { left: c.leftValue }),
-                ...(c.rightValue !== undefined && { right: c.rightValue }),
-                zIndex: 0
-
-            }}>
-        </View>
-    );
+export default function CircleShape({
+  width,
+  hieght,
+  fillColor,
+  borderRadius,
+  topValue,
+  leftValue,
+  className,
+}: CircleShapeProps) {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        width,
+        height: hieght,
+        backgroundColor: fillColor || "transparent",
+        borderRadius,
+        top: topValue,
+        left: leftValue,
+        opacity: 0.6,
+      }}
+      className={className}
+    />
+  )
 }

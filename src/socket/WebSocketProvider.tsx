@@ -27,7 +27,7 @@ export const WebSocketProvider: React.FC<{
       return;
     }
     const socket = new WebSocket(
-      `wss://${process.env.EXPO_PUBLIC_WS_URL}/ChatAppBackEnd/chat?userId=${userId}`
+      `wss://${process.env.EXPO_PUBLIC_WS_URL}/TappsyBackEnd/chat?userId=${userId}`
     ); //wss => https
 
     socketRef.current = socket;

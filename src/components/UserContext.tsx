@@ -7,6 +7,7 @@ export interface UserRegistrationData {
     contactNo: string;
     countryCode: string;
     profileImage: string | null;
+    pinCode: string;
 }
 
 interface UserRegistrationContextType {
@@ -24,6 +25,7 @@ export const UserRegistrationProvider: React.FC<{ children: ReactNode }> = ({ ch
         contactNo: "",
         countryCode: "",
         profileImage: null,
+        pinCode: "",
     });
 
     return (

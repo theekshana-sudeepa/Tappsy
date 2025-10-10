@@ -14,8 +14,6 @@ export default function ChatsScreen() {
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             
         </Stack.Navigator>
-
-
     );
 
 

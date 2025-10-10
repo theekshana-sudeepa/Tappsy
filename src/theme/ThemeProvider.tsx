@@ -1,82 +1,127 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { colorScheme, useColorScheme } from "nativewind";
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import type React from "react"
+import { createContext, useContext, useEffect, useState } from "react"
+import { Appearance, Platform } from "react-native"
 
-export type ThemeOption = "light" | "dark" | "system";
+export type ThemeOption = "light" | "dark" | "system"
 
-const THEME_KEY = "@app_color_scheme";
+const THEME_KEY = "@app_color_scheme"
 
 type ThemeContextType = {
-  preference: ThemeOption;
-  applied: "light" | "dark"; // use on runtime
-  setPreference: (themeOption: ThemeOption) => Promise<void>;
-};
+  preference: ThemeOption
+  applied: "light" | "dark"
+  setPreference: (themeOption: ThemeOption) => Promise<void>
+}
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { colorScheme, setColorScheme } = useColorScheme();
-  const [getPreferenceState, setPreferenceState] =
-    useState<ThemeOption>("system");
-  const [isReady, setReady] = useState(false);
+  const [preferenceState, setPreferenceState] = useState<ThemeOption>("system")
+  const [appliedTheme, setAppliedTheme] = useState<"light" | "dark">("light")
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  const getSystemTheme = (): "light" | "dark" => {
+    const systemScheme = Appearance.getColorScheme()
+    console.log("[v0] Detecting system theme on", Platform.OS, ":", systemScheme)
+    return systemScheme === "dark" ? "dark" : "light"
+  }
 
   useEffect(() => {
-    (async () => {
+    const initializeTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem(THEME_KEY);
+        const savedTheme = await AsyncStorage.getItem(THEME_KEY)
+        console.log("[v0] Saved theme preference:", savedTheme)
+
         if (savedTheme === "light" || savedTheme === "dark") {
-          setPreferenceState(savedTheme);
-          setColorScheme(savedTheme);
+          setPreferenceState(savedTheme)
+          setAppliedTheme(savedTheme)
+          console.log("[v0] Applied saved theme:", savedTheme)
         } else {
-          setPreferenceState("system");
-          setColorScheme("system");
+          // Use system theme
+          const systemTheme = getSystemTheme()
+          setPreferenceState("system")
+          setAppliedTheme(systemTheme)
+          console.log("[v0] Applied system theme:", systemTheme)
         }
       } catch (error) {
-        console.warn("Failed to load theme: " + error);
+        console.error("[v0] Theme initialization error:", error)
+        const systemTheme = getSystemTheme()
+        setAppliedTheme(systemTheme)
       } finally {
-        setReady(true);
+        setIsInitialized(true)
       }
-    })();
-  }, [setColorScheme]);
+    }
+
+    initializeTheme()
+  }, [])
+
+  useEffect(() => {
+    if (!isInitialized) return
+
+    if (preferenceState === "system") {
+      console.log("[v0] Setting up system theme listener")
+
+      // Apply current system theme immediately
+      const currentSystemTheme = getSystemTheme()
+      setAppliedTheme(currentSystemTheme)
+      console.log("[v0] Applied current system theme:", currentSystemTheme)
+
+      // Listen for changes
+      const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+        const newTheme = colorScheme === "dark" ? "dark" : "light"
+        console.log("[v0] System theme changed to:", newTheme)
+        setAppliedTheme(newTheme)
+      })
+
+      return () => {
+        console.log("[v0] Removing system theme listener")
+        subscription.remove()
+      }
+    }
+  }, [preferenceState, isInitialized])
 
   const setPreference = async (themeOption: ThemeOption) => {
+    console.log("[v0] Setting theme preference to:", themeOption)
+
     try {
       if (themeOption === "system") {
-        await AsyncStorage.removeItem(THEME_KEY);
-        setPreferenceState("system");
-        setColorScheme("system");
+        await AsyncStorage.removeItem(THEME_KEY)
+        const systemTheme = getSystemTheme()
+        setPreferenceState("system")
+        setAppliedTheme(systemTheme)
+        console.log("[v0] Switched to system theme:", systemTheme)
       } else {
-        await AsyncStorage.setItem(THEME_KEY, themeOption);
-        setPreferenceState(themeOption);
-        setColorScheme(themeOption);
+        await AsyncStorage.setItem(THEME_KEY, themeOption)
+        setPreferenceState(themeOption)
+        setAppliedTheme(themeOption)
+        console.log("[v0] Switched to manual theme:", themeOption)
       }
     } catch (error) {
-      console.warn("Failed to save theme: " + error);
+      console.error("[v0] Failed to save theme preference:", error)
     }
-  };
+  }
 
-  if (!isReady) {
-    return <ActivityIndicator style={{ flex: 1 }} />;
+  if (!isInitialized) {
+    return null
   }
 
   return (
     <ThemeContext.Provider
       value={{
-        preference: getPreferenceState,
-        applied: colorScheme ?? "light",
+        preference: preferenceState,
+        applied: appliedTheme,
         setPreference,
       }}
     >
       {children}
     </ThemeContext.Provider>
-  );
+  )
 }
 
 export function useTheme() {
-  const ctx = useContext(ThemeContext);
+  const ctx = useContext(ThemeContext)
   if (!ctx) {
-    throw new Error("useTheme must be used inside ThemeProvider");
+    throw new Error("useTheme must be used inside ThemeProvider")
   }
-  return ctx;
+  return ctx
 }

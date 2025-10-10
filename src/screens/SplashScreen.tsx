@@ -1,174 +1,73 @@
-import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import "../../global.css";
-import CircleShape from "../components/CircleShape";
-import { useEffect, useRef } from "react";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStack } from "../../App";
-import { useTheme } from "../theme/ThemeProvider";
-import { useWebSocketPing } from "../socket/UseWebSocketPing";
+import { StatusBar, Text, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import "../../global.css"
+import { useEffect } from "react"
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated"
+import { useNavigation } from "@react-navigation/native"
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import type { RootStack } from "../../App"
+import { useTheme } from "../theme/ThemeProvider"
+import { useWebSocketPing } from "../socket/UseWebSocketPing"
+import GradientBackground from "../components/GradientBackground"
+import FloatingElement from "../components/FloatingElement"
+import AnimatedLogo from "../components/AnimatedLogo"
+import GlassmorphicCard from "../components/GlassmorphicCard"
 
-
-
-type Props = NativeStackNavigationProp<RootStack, "SplashScreen">;
+type Props = NativeStackNavigationProp<RootStack, "SplashScreen">
 
 export default function SplashScreen() {
-    const navigation = useNavigation<Props>();
-    const opacity = useSharedValue(0);
+  const navigation = useNavigation<Props>()
+  const footerOpacity = useSharedValue(0)
 
-    useWebSocketPing(6000); // 1000 * 60 * 4
+  useWebSocketPing(6000)
 
-    useEffect(() => {
+  useEffect(() => {
+    footerOpacity.value = withDelay(800, withTiming(1, { duration: 1000 }))
+    // const timer = setTimeout(() => {
+    //   navigation.replace("SignUpScreen");
+    // }, 3000);
 
-        opacity.value = withTiming(1, { duration: 3000 });
-        // const timer = setTimeout(() => {
-        //   navigation.replace("SignUpScreen");
-        // }, 3000);
+    // return () => {
+    //   clearTimeout(timer);
+    // };
+  }, [navigation, footerOpacity])
 
-        // return () => {
-        //   clearTimeout(timer);
-        // };
-    }, [navigation, opacity]);
+  const footerAnimatedStyle = useAnimatedStyle(() => {
+    return { opacity: footerOpacity.value }
+  })
 
-    const animatedStyle = useAnimatedStyle(() => {
-        return { opacity: opacity.value };
-    });
+  const { applied } = useTheme()
 
+  const logo = applied === "dark" ? require("../../assets/logoWhite.png") : require("../../assets/logoBlue.png")
 
+  return (
+    <SafeAreaView style={{ flex: 1 }} className="items-center justify-center">
+      <StatusBar hidden={true} />
 
-    const { applied } = useTheme();
+      <GradientBackground />
 
-    const logo = applied === "dark" ?
-        require("../../assets/logoWhite.png") : require("../../assets/logoBlue.png");
+      <FloatingElement size={120} color="rgba(96, 165, 250, 0.3)" top={100} left={30} delay={0} />
+      <FloatingElement size={80} color="rgba(96, 165, 250, 0.2)" top={150} left={280} delay={500} />
+      <FloatingElement size={100} color="rgba(255, 255, 255, 0.2)" top={500} left={50} delay={300} />
+      <FloatingElement size={60} color="rgba(96, 165, 250, 0.25)" top={600} left={300} delay={700} />
 
-    return (
+      <View className="items-center justify-center">
+        <AnimatedLogo source={logo} />
+      </View>
 
-        <SafeAreaView className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-950">
-            <StatusBar hidden={true} />
+      <Animated.View style={[footerAnimatedStyle, { position: "absolute", bottom: 40 }]}>
+        <GlassmorphicCard>
+          <View className="flex-col items-center gap-1">
+            <Text style={{ color: "#FFFFFF" }} className="text-xs font-semibold tracking-wide">
+              POWERED BY: {process.env.EXPO_PUBLIC_APP_OWNER}
+            </Text>
 
-            <CircleShape
-                width={260}
-                hieght={260}
-                className="bg-blue-800"
-                /* fillColor={"#1e40af"} */
-                borderRadius={999}
-                topValue={-100}
-                leftValue={-100}
-            />
-            <CircleShape
-                width={240}
-                hieght={240}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-120}
-                leftValue={60}
-            />
-
-
-            <CircleShape
-                width={220}
-                hieght={220}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-80}
-                leftValue={120}
-            />
-            <CircleShape
-                width={200}
-                hieght={200}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-110}
-                leftValue={180}
-            />
-            <CircleShape
-                width={180}
-                hieght={180}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-60}
-                leftValue={220}
-            />
-
-
-            <CircleShape
-                width={160}
-                hieght={160}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-90}
-                leftValue={270}
-            />
-            <CircleShape
-                width={140}
-                hieght={140}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-40}
-                leftValue={300}
-            />
-            <CircleShape
-                width={120}
-                hieght={120}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-70}
-                leftValue={330}
-            />
-            <CircleShape
-                width={100}
-                hieght={100}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-30}
-                leftValue={360}
-            />
-            <CircleShape
-                width={80}
-                hieght={80}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-50}
-                leftValue={390}
-            />
-            <CircleShape
-                width={60}
-                hieght={60}
-                className="bg-blue-800"
-                borderRadius={999}
-                topValue={-20}
-                leftValue={420}
-            />
-
-
-
-
-            <Animated.View style={animatedStyle}>
-                <Image
-                    source={logo}
-                    style={{ height: 180, width: 220 }}
-                />
-            </Animated.View>
-
-            <Animated.View style={animatedStyle} className="absolute bottom-10">
-                <View className="flex-1 flex-col justify-center items-center">
-
-                    <Text className="text-xs font-bold text-gray-500 dark:text-slate-200">
-                        POWERD BY: {process.env.EXPO_PUBLIC_APP_OWNER}</Text>
-
-                    <Text className="text-xs font-bold text-gray-500  dark:text-slate-200">
-                        VERSION: {process.env.EXPO_PUBLIC_APP_VERSION}</Text>
-
-                </View>
-            </Animated.View>
-
-
-
-
-
-        </SafeAreaView>
-
-    );
+            <Text style={{ color: "#D1D5DB" }} className="text-xs">
+              VERSION: {process.env.EXPO_PUBLIC_APP_VERSION}
+            </Text>
+          </View>
+        </GlassmorphicCard>
+      </Animated.View>
+    </SafeAreaView>
+  )
 }
