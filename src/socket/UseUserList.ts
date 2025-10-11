@@ -8,7 +8,6 @@ export function useUserList() {
 
     useEffect(() => {
         if (!socket) {
-
             return;
         }
         sendMessage({ type: "get_all_users" });

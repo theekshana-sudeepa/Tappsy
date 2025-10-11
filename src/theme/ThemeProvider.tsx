@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const getSystemTheme = (): "light" | "dark" => {
     const systemScheme = Appearance.getColorScheme()
-    console.log("[v0] Detecting system theme on", Platform.OS, ":", systemScheme)
+    console.log("Detecting system theme on", Platform.OS, ":", systemScheme)
     return systemScheme === "dark" ? "dark" : "light"
   }
 
@@ -30,21 +30,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const initializeTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem(THEME_KEY)
-        console.log("[v0] Saved theme preference:", savedTheme)
+        console.log("Saved theme preference:", savedTheme)
 
         if (savedTheme === "light" || savedTheme === "dark") {
           setPreferenceState(savedTheme)
           setAppliedTheme(savedTheme)
-          console.log("[v0] Applied saved theme:", savedTheme)
+          console.log("Applied saved theme:", savedTheme)
         } else {
           // Use system theme
           const systemTheme = getSystemTheme()
           setPreferenceState("system")
           setAppliedTheme(systemTheme)
-          console.log("[v0] Applied system theme:", systemTheme)
+          console.log("Applied system theme:", systemTheme)
         }
       } catch (error) {
-        console.error("[v0] Theme initialization error:", error)
+        console.error("Theme initialization error:", error)
         const systemTheme = getSystemTheme()
         setAppliedTheme(systemTheme)
       } finally {
@@ -59,29 +59,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!isInitialized) return
 
     if (preferenceState === "system") {
-      console.log("[v0] Setting up system theme listener")
+      console.log("Setting up system theme listener")
 
       // Apply current system theme immediately
       const currentSystemTheme = getSystemTheme()
       setAppliedTheme(currentSystemTheme)
-      console.log("[v0] Applied current system theme:", currentSystemTheme)
+      console.log("Applied current system theme:", currentSystemTheme)
 
       // Listen for changes
       const subscription = Appearance.addChangeListener(({ colorScheme }) => {
         const newTheme = colorScheme === "dark" ? "dark" : "light"
-        console.log("[v0] System theme changed to:", newTheme)
+        console.log("System theme changed to:", newTheme)
         setAppliedTheme(newTheme)
       })
 
       return () => {
-        console.log("[v0] Removing system theme listener")
+        console.log("Removing system theme listener")
         subscription.remove()
       }
     }
   }, [preferenceState, isInitialized])
 
   const setPreference = async (themeOption: ThemeOption) => {
-    console.log("[v0] Setting theme preference to:", themeOption)
+    console.log("Setting theme preference to:", themeOption)
 
     try {
       if (themeOption === "system") {
@@ -89,15 +89,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         const systemTheme = getSystemTheme()
         setPreferenceState("system")
         setAppliedTheme(systemTheme)
-        console.log("[v0] Switched to system theme:", systemTheme)
+        console.log("Switched to system theme:", systemTheme)
       } else {
         await AsyncStorage.setItem(THEME_KEY, themeOption)
         setPreferenceState(themeOption)
         setAppliedTheme(themeOption)
-        console.log("[v0] Switched to manual theme:", themeOption)
+        console.log("Switched to manual theme:", themeOption)
       }
     } catch (error) {
-      console.error("[v0] Failed to save theme preference:", error)
+      console.error("Failed to save theme preference:", error)
     }
   }
 

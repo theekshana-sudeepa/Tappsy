@@ -14,6 +14,7 @@ export default function GlassmorphicCard({ children }: GlassmorphicCardProps) {
         padding: 20,
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 0.2)",
+        width: 370,
       }}
     >
       {children}

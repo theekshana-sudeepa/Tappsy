@@ -63,8 +63,8 @@ export default function HomeTabs() {
       })}
     >
       <Tabs.Screen name="Chats" component={ChatsScreen} options={{ headerShown: false }} />
-      <Tabs.Screen name="Status" component={StatusScreen} />
-      <Tabs.Screen name="Calls" component={CallsScreen} />
+      <Tabs.Screen name="Status" component={StatusScreen}  options={{ headerShown: false }} />
+      <Tabs.Screen name="Calls" component={CallsScreen} options={{ headerShown: false }} />
     </Tabs.Navigator>
   )
 }

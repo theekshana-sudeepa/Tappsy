@@ -32,7 +32,7 @@ export const createNewAccount = async (
   }
 };
 
-export const uploadProfileImage = async (userId:string, imageUri: string) => {
+export const uploadProfileImage = async (userId: string, imageUri: string) => {
   let formData = new FormData();
   formData.append("userId", userId);
   formData.append("profileImage", {
@@ -58,15 +58,15 @@ export const signIn = async (contactNo: string, pincode: string) => {
   formData.append("pincode", pincode)
 
   // After: Using URLSearchParams
-const params = new URLSearchParams()
-params.append("contactNo", contactNo)
-params.append("pincode", pincode)
+  const params = new URLSearchParams()
+  params.append("contactNo", contactNo)
+  params.append("pincode", pincode)
 
   try {
     const response = await fetch(API + "/LoginController", {
       method: "POST",
       body: formData,
-      headers:{
+      headers: {
         'content-type': 'application/x-www-form-urlencoded'
       }
     })

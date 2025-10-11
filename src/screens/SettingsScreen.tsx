@@ -18,7 +18,7 @@ export default function SettingScreen() {
   const { preference, applied, setPreference } = useTheme()
   const navigation = useNavigation<SettingScreenProp>()
 
-  console.log("[v0] SettingScreen - Current theme:", applied, "Preference:", preference)
+  console.log("SettingScreen - Current theme:", applied, "Preference:", preference)
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -43,7 +43,7 @@ export default function SettingScreen() {
   const borderColor = applied === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.4)"
 
   const handleThemePress = async (option: ThemeOption) => {
-    console.log("[v0] Theme button pressed:", option)
+    console.log("Theme button pressed:", option)
     await setPreference(option)
   }
 

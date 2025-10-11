@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "ChatApp",
-    "slug": "ChatApp",
+    "name": "Tappsy",
+    "slug": "Tappsy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logoBlue.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
