@@ -1,166 +1,139 @@
-import { Image, KeyboardAvoidingView, Platform, Pressable, StatusBar, Text, View } from "react-native"
+import { Image, KeyboardAvoidingView, Platform, Pressable, StatusBar, Text, TextInput, View } from "react-native"
 import { ALERT_TYPE, Toast } from "react-native-alert-notification"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "../theme/ThemeProvider"
-import "../../global.css"
-import { FloatingLabelInput } from "react-native-floating-label-input"
 import type { RootStack } from "../../App"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "@react-navigation/native"
 import { useUserRegistration } from "../components/UserContext"
 import { validateFirstName, validateLastName } from "../util/Validation"
-import GradientBackground from "../components/GradientBackground"
-import FloatingElement from "../components/FloatingElement"
 import { useState } from "react"
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
+import { Ionicons } from "@expo/vector-icons"
 
 type SignUpProps = NativeStackNavigationProp<RootStack, "SignUpScreen">
 
 export default function SignUpScreen() {
   const navigation = useNavigation<SignUpProps>()
   const { applied } = useTheme()
-  const logo = applied === "dark" ? require("../../assets/logoWhite.png") : require("../../assets/logoBlue.png")
+  const isDark = applied === "dark"
+
+  // Tappsy Palette (WhatsApp Structure + Tappsy Theme)
+  const tappsyBlue = "#0084FF"
+  const tappsyCyan = "#00C2FF"
+  const bg = isDark ? "#0F172A" : "#FFFFFF"
+  const primaryText = isDark ? "#F8FAFC" : "#0F172A"
+  const secondaryText = isDark ? "#94A3B8" : "#64748B"
+  const lineBlue = isDark ? "#38BDF8" : tappsyBlue
 
   const { userData, setUserData } = useUserRegistration()
-  const [isPressed, setIsPressed] = useState(false)
+  const [firstName, setFirstName] = useState(userData.firstName || "Theekshana")
+  const [lastName, setLastName] = useState(userData.lastName || "Sudeepa")
 
   return (
-    <View style={{ flex: 1 }}>
-      <GradientBackground />
+    <View style={{ flex: 1, backgroundColor: bg }}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 
-      <FloatingElement size={100} color="rgba(59, 130, 246, 0.5)" top={50} left={20} delay={0} />
-      <FloatingElement size={80} color="rgba(255, 255, 255, 0.2)" top={150} left={300} delay={500} />
-      <FloatingElement size={60} color="rgba(59, 130, 246, 0.5)" top={400} left={50} delay={1000} />
-      <FloatingElement size={90} color="rgba(255, 255, 255, 0.2)" top={600} left={280} delay={1500} />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "android" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "android" ? 40 : 40}
-        className="flex-1 items-center"
-      >
-        <SafeAreaView className="p-5 justify-center items-center flex-1">
-          <StatusBar hidden={true} />
-
-          <Animated.View entering={FadeInUp.duration(800).delay(200)}>
-            <Image source={logo} className="h-40 w-36" />
-          </Animated.View>
-
-          <Animated.View className="w-full justify-start items-start mt-4" entering={FadeInUp.duration(800).delay(400)}>
-            <Text className="font-bold text-white text-lg">Create Your Account & Start The Conversation TODAY</Text>
-          </Animated.View>
-
-          <Animated.View
-            className="self-stretch mt-6"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              borderRadius: 24,
-              padding: 24,
-              borderWidth: 1,
-              borderColor: "rgba(255, 255, 255, 0.3)",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.1,
-              shadowRadius: 16,
-              elevation: 8,
-            }}
-            entering={FadeInUp.duration(800).delay(600)}
-          >
-            <View className="w-full mb-4">
-              <FloatingLabelInput
-                label={"Enter Your First Name"}
-                value={userData.firstName}
-                onChangeText={(text) => {
-                  setUserData((previous) => ({
-                    ...previous,
-                    firstName: text,
-                  }))
-                }}
-                customLabelStyles={{
-                  colorFocused: "#60A5FA",
-                  colorBlurred: "#D1D5DB",
-                  fontSizeFocused: 12,
-                  fontSizeBlurred: 16,
-                }}
-                labelStyles={{
-                  color: "#D1D5DB",
-                }}
-                inputStyles={{
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                  paddingVertical: 12,
-                }}
-                containerStyles={{
-                  borderBottomWidth: 2,
-                  borderBottomColor: "rgba(255, 255, 255, 0.4)",
-                  paddingVertical: 8,
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                }}
-              />
-            </View>
-
-            <View className="w-full">
-              <FloatingLabelInput
-                label={"Enter Your Last Name"}
-                value={userData.lastName}
-                onChangeText={(text) => {
-                  setUserData((previous) => ({
-                    ...previous,
-                    lastName: text,
-                  }))
-                }}
-                customLabelStyles={{
-                  colorFocused: "#60A5FA",
-                  colorBlurred: "#D1D5DB",
-                  fontSizeFocused: 12,
-                  fontSizeBlurred: 16,
-                }}
-                labelStyles={{
-                  color: "#D1D5DB",
-                }}
-                inputStyles={{
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                  paddingVertical: 12,
-                }}
-                containerStyles={{
-                  borderBottomWidth: 2,
-                  borderBottomColor: "rgba(255, 255, 255, 0.4)",
-                  paddingVertical: 8,
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                }}
-              />
-            </View>
-          </Animated.View>
-
-          <Animated.View className="mt-8 w-full" entering={FadeInDown.duration(800).delay(800)}>
-            <Pressable
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "android" ? "padding" : "height"}
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 24,
+            paddingVertical: 24,
+          }}
+        >
+          {/* Centered Tappsy Hero Icon & Welcome */}
+          <View style={{ width: "100%", alignItems: "center", paddingTop: 40 }}>
+            {/* Tappsy Hero Circle Icon */}
+            <View
               style={{
-                backgroundColor: isPressed ? "rgba(96, 165, 250, 0.8)" : "#60A5FA",
-                height: 56,
-                display: "flex",
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                backgroundColor: tappsyBlue,
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: 16,
-                width: 370,
-                alignSelf: "center",
-                borderWidth: 2,
-                borderColor: "rgba(255, 255, 255, 0.3)",
-                shadowColor: "#60A5FA",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.4,
-                shadowRadius: 16,
-                elevation: 8,
-                transform: [{ scale: isPressed ? 0.97 : 1 }],
+                marginBottom: 28,
+                shadowColor: tappsyBlue,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.35,
+                shadowRadius: 8,
+                elevation: 6,
               }}
-              onPressIn={() => setIsPressed(true)}
-              onPressOut={() => setIsPressed(false)}
+            >
+              <Ionicons name="chatbubbles" size={50} color="#FFFFFF" />
+            </View>
+
+            <Text style={{ fontSize: 26, fontWeight: "800", color: primaryText, marginBottom: 10 }}>
+              Welcome to Tappsy
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 13,
+                color: secondaryText,
+                textAlign: "center",
+                lineHeight: 19,
+                paddingHorizontal: 20,
+              }}
+            >
+              Read our <Text style={{ color: isDark ? "#38BDF8" : tappsyBlue, fontWeight: "600" }}>Privacy Policy</Text>. Tap "Agree and continue" to accept the <Text style={{ color: isDark ? "#38BDF8" : tappsyBlue, fontWeight: "600" }}>Terms of Service</Text>.
+            </Text>
+
+            {/* Profile Info Form Inputs */}
+            <View style={{ width: "100%", maxWidth: 300, marginTop: 36 }}>
+              <View style={{ borderBottomWidth: 1.5, borderBottomColor: lineBlue, paddingBottom: 6, marginBottom: 20 }}>
+                <Text style={{ fontSize: 12, color: lineBlue, fontWeight: "600" }}>First Name</Text>
+                <TextInput
+                  style={{ fontSize: 16, color: primaryText, fontWeight: "600", marginTop: 4 }}
+                  value={firstName}
+                  onChangeText={(text) => {
+                    setFirstName(text)
+                    setUserData((prev) => ({ ...prev, firstName: text }))
+                  }}
+                  placeholder="First Name"
+                  placeholderTextColor={secondaryText}
+                />
+              </View>
+
+              <View style={{ borderBottomWidth: 1.5, borderBottomColor: lineBlue, paddingBottom: 6 }}>
+                <Text style={{ fontSize: 12, color: lineBlue, fontWeight: "600" }}>Last Name</Text>
+                <TextInput
+                  style={{ fontSize: 16, color: primaryText, fontWeight: "600", marginTop: 4 }}
+                  value={lastName}
+                  onChangeText={(text) => {
+                    setLastName(text)
+                    setUserData((prev) => ({ ...prev, lastName: text }))
+                  }}
+                  placeholder="Last Name"
+                  placeholderTextColor={secondaryText}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Bottom Actions */}
+          <View style={{ width: "100%", maxWidth: 300, alignItems: "center", paddingBottom: 20 }}>
+            <Pressable
+              style={{
+                backgroundColor: tappsyBlue,
+                height: 48,
+                borderRadius: 24,
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                shadowColor: tappsyBlue,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.35,
+                shadowRadius: 4,
+                elevation: 4,
+                marginBottom: 16,
+              }}
               onPress={() => {
-                const validFirstName = validateFirstName(userData.firstName)
-                const validLastName = validateLastName(userData.lastName)
+                const validFirstName = validateFirstName(firstName)
+                const validLastName = validateLastName(lastName)
                 if (validFirstName) {
                   Toast.show({
                     type: ALERT_TYPE.WARNING,
@@ -178,34 +151,19 @@ export default function SignUpScreen() {
                 }
               }}
             >
-              <Text className="text-white font-bold text-2xl">Next</Text>
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View className="mt-6 w-full items-center" entering={FadeInDown.duration(800).delay(1000)}>
-            <Pressable onPress={() => navigation.navigate("SignInScreen")}>
-              <Text
-                style={{
-                  color: applied === "dark" ? "#E5E7EB" : "#FFFFFF",
-                  fontSize: 16,
-                  textAlign: "center",
-                }}
-              >
-                Already have an account?{" "}
-                <Text
-                  style={{
-                    color: "#60A5FA",
-                    fontWeight: "bold",
-                    textDecorationLine: "underline",
-                  }}
-                >
-                  Sign In
-                </Text>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "#FFFFFF" }}>
+                Agree and continue
               </Text>
             </Pressable>
-          </Animated.View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+
+            <Pressable onPress={() => navigation.navigate("SignInScreen")}>
+              <Text style={{ fontSize: 14, color: isDark ? "#38BDF8" : tappsyBlue, fontWeight: "600" }}>
+                Already registered? Sign In
+              </Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   )
 }

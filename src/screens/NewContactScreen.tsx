@@ -1,275 +1,216 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { Pressable, Text, TouchableOpacity, View } from "react-native"
+import { Pressable, Text, TouchableOpacity, View, StatusBar, TextInput } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import type { RootStack } from "../../App"
-import { useLayoutEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigation } from "@react-navigation/native"
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons"
-import { FloatingLabelInput } from "react-native-floating-label-input"
+import { Feather, Ionicons } from "@expo/vector-icons"
 import CountryPicker, { type Country, type CountryCode } from "react-native-country-picker-modal"
 import { validateCountryCode, validateFirstName, validateLastName, validatePhoneNo } from "../util/Validation"
 import { ALERT_TYPE, Toast } from "react-native-alert-notification"
 import { useSendNewContact } from "../socket/UseSendNewContact"
-import GradientBackground from "../components/GradientBackground"
-import FloatingElement from "../components/FloatingElement"
-import Animated, { FadeInDown } from "react-native-reanimated"
 import { useTheme } from "../theme/ThemeProvider"
 
 type NewContactScreenProp = NativeStackNavigationProp<RootStack, "NewContactScreen">
 
 export default function NewContactScreen() {
-  const { applied } = useTheme() // Fixed theme property name from appliedTheme to applied
+  const { applied } = useTheme()
   const isDark = applied === "dark"
 
-  // Theme-aware colors
-  const primaryText = isDark ? "#F9FAFB" : "#1F2937"
-  const secondaryText = isDark ? "#E5E7EB" : "#6B7280"
-  const iconColor = isDark ? "#F9FAFB" : "#1F2937"
-  const glassBackground = isDark ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.85)"
-  const glassBorder = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.3)"
-  const inputColor = isDark ? "#F9FAFB" : "#1F2937"
-  const labelColor = isDark ? "#D1D5DB" : "#6B7280"
-  const focusColor = "#60A5FA"
+  // Tappsy Theme Palette (WhatsApp Structure + Tappsy Theme)
+  const tappsyBlue = "#0084FF"
+  const tappsyCyan = "#00C2FF"
+  const bg = isDark ? "#0F172A" : "#FFFFFF"
+  const headerBg = isDark ? "#0F172A" : "#FFFFFF"
+  const primaryText = isDark ? "#F8FAFC" : "#0F172A"
+  const secondaryText = isDark ? "#94A3B8" : "#64748B"
+  const inputBorder = isDark ? "#1E293B" : "#F1F5F9"
+  const iconColor = isDark ? "#94A3B8" : "#64748B"
+  const inputBg = isDark ? "#1E293B" : "#F1F5F9"
 
   const navigation = useNavigation<NewContactScreenProp>()
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: "",
-      headerTransparent: true,
-      headerBlurEffect: "light",
-      headerStyle: {
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
-      },
-      headerTintColor: iconColor,
-      headerLeft: () => (
-        <View className="items-center flex-row gap-x-2">
-          <TouchableOpacity
-            className="justify-center items-center"
-            onPress={() => {
-              navigation.goBack()
-            }}
-          >
-            <Ionicons name="arrow-back-sharp" size={24} color={iconColor} />
-          </TouchableOpacity>
-          <View className="flex-col">
-            <Text className="text-lg font-bold" style={{ color: primaryText }}>
-              New Contact
-            </Text>
-          </View>
-        </View>
-      ),
-      headerRight: () => <View></View>,
-    })
-  }, [navigation, primaryText, iconColor])
 
   const [countryCode, setCountryCode] = useState<CountryCode>("LK")
   const [country, setCountry] = useState<Country | null>(null)
   const [show, setShow] = useState<boolean>(false)
   const [callingCode, setCallingCode] = useState("+94")
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [phoneNo, setPhoneNo] = useState("")
+  const [firstName, setFirstName] = useState("Shenali")
+  const [lastName, setLastName] = useState("Fernando")
+  const [phoneNo, setPhoneNo] = useState("772345678")
 
   const newContact = useSendNewContact()
   const sendNewContact = newContact.sendNewContact
 
-  const sendData = () => {
-    sendNewContact({
-      id: 0,
-      firstName: firstName,
-      lastName: lastName,
-      countryCode: callingCode,
-      contactNo: phoneNo,
-      createdAt: "",
-      updatedAt: "",
-      status: "",
-    })
+  const handleSave = () => {
+    const firstNameValid = validateFirstName(firstName)
+    const lastNameValid = validateLastName(lastName)
+    const countryCodeValid = validateCountryCode(callingCode)
+    const phoneNoValid = validatePhoneNo(phoneNo)
 
-    setFirstName("")
-    setLastName("")
-    setCallingCode("+94")
-    setPhoneNo("")
+    if (firstNameValid) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Warning",
+        textBody: firstNameValid,
+      })
+    } else if (lastNameValid) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Warning",
+        textBody: lastNameValid,
+      })
+    } else if (countryCodeValid) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Warning",
+        textBody: countryCodeValid,
+      })
+    } else if (phoneNoValid) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Warning",
+        textBody: phoneNoValid,
+      })
+    } else {
+      sendNewContact({
+        id: 0,
+        firstName: firstName,
+        lastName: lastName,
+        countryCode: callingCode,
+        contactNo: phoneNo,
+        createdAt: "",
+        updatedAt: "",
+        status: "",
+      })
+
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: "Success",
+        textBody: "Contact saved successfully",
+      })
+      navigation.goBack()
+    }
   }
 
   return (
-    <SafeAreaView className="flex-1 mt-10" edges={["right", "bottom", "left"]}>
-      <GradientBackground />
-      <FloatingElement size={120} top={100} left={-40} color="rgba(59, 130, 246, 0.5)" />
-      <FloatingElement size={80} top={300} left={280} color="rgba(255, 255, 255, 0.2)" />
-      <FloatingElement size={100} top={500} left={30} color="rgba(59, 130, 246, 0.5)" />
+    <View style={{ flex: 1, backgroundColor: bg }}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 
-      <Animated.View entering={FadeInDown.delay(200).springify()} className="flex-1 px-5 mt-24">
+      <SafeAreaView style={{ flex: 1 }} edges={["top", "right", "left"]}>
+        {/* WhatsApp Top Navigation Bar */}
         <View
-          className="p-6 rounded-3xl"
           style={{
-            backgroundColor: glassBackground,
-            borderWidth: 1,
-            borderColor: glassBorder,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.1,
-            shadowRadius: 12,
-            elevation: 5,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            backgroundColor: headerBg,
+            borderBottomWidth: 1,
+            borderBottomColor: inputBorder,
           }}
         >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ padding: 6, marginRight: 12 }}
+            >
+              <Ionicons name="arrow-back" size={24} color={isDark ? "#E9EDEF" : "#111B21"} />
+            </TouchableOpacity>
+            <Text style={{ fontSize: 20, fontWeight: "700", color: primaryText }}>
+              New contact
+            </Text>
+          </View>
+
+          <TouchableOpacity onPress={handleSave} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
+            <Text style={{ fontSize: 16, fontWeight: "700", color: isDark ? "#38BDF8" : tappsyBlue }}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
           {/* First Name Input */}
-          <Animated.View
-            entering={FadeInDown.delay(300).springify()}
-            className="flex-row items-center gap-x-3 h-14 mb-4"
-          >
-            <FontAwesome name="user" size={24} color={iconColor} />
-            <View className="flex-1 h-14">
-              <FloatingLabelInput
-                label="First Name"
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
+            <Feather name="user" size={22} color={iconColor} style={{ marginRight: 20 }} />
+            <View style={{ flex: 1, borderBottomWidth: 1.5, borderBottomColor: isDark ? "#38BDF8" : tappsyBlue, paddingBottom: 4 }}>
+              <Text style={{ fontSize: 12, color: isDark ? "#38BDF8" : tappsyBlue, fontWeight: "600" }}>First name</Text>
+              <TextInput
+                style={{ fontSize: 16, color: primaryText, fontWeight: "500", marginTop: 4 }}
                 value={firstName}
-                onChangeText={(text) => setFirstName(text)}
-                customLabelStyles={{
-                  colorFocused: focusColor,
-                  colorBlurred: labelColor,
-                }}
-                labelStyles={{ color: labelColor }}
-                inputStyles={{ color: inputColor }}
+                onChangeText={setFirstName}
+                placeholder="First name"
+                placeholderTextColor={secondaryText}
               />
             </View>
-          </Animated.View>
+          </View>
 
           {/* Last Name Input */}
-          <Animated.View
-            entering={FadeInDown.delay(350).springify()}
-            className="flex-row items-center gap-x-3 h-14 mb-4"
-          >
-            <FontAwesome name="user" size={24} color={iconColor} />
-            <View className="flex-1 h-14">
-              <FloatingLabelInput
-                label="Last Name"
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
+            <View style={{ width: 22, marginRight: 20 }} />
+            <View style={{ flex: 1, borderBottomWidth: 1, borderBottomColor: inputBorder, paddingBottom: 4 }}>
+              <TextInput
+                style={{ fontSize: 16, color: primaryText, fontWeight: "500" }}
                 value={lastName}
-                onChangeText={(text) => setLastName(text)}
-                customLabelStyles={{
-                  colorFocused: focusColor,
-                  colorBlurred: labelColor,
-                }}
-                labelStyles={{ color: labelColor }}
-                inputStyles={{ color: inputColor }}
+                onChangeText={setLastName}
+                placeholder="Last name"
+                placeholderTextColor={secondaryText}
               />
             </View>
-          </Animated.View>
+          </View>
 
-          {/* Country Picker */}
-          <Animated.View
-            entering={FadeInDown.delay(400).springify()}
-            className="justify-center items-center flex-row h-14 mb-4"
-            style={{
-              borderBottomWidth: 2,
-              borderBottomColor: focusColor,
-            }}
-          >
-            <CountryPicker
-              countryCode={countryCode}
-              withFilter
-              withFlag
-              withCountryNameButton
-              withCallingCode
-              visible={show}
-              onClose={() => {
-                setShow(false)
-              }}
-              onSelect={(c) => {
-                setCountryCode(c.cca2)
-                setCountry(c)
-                setShow(false)
-              }}
-            />
-            <AntDesign name="caret-down" size={18} color={iconColor} style={{ marginTop: 5 }} />
-          </Animated.View>
-
-          {/* Phone Number Input */}
-          <Animated.View
-            entering={FadeInDown.delay(450).springify()}
-            className="flex-row items-center gap-x-3 h-14 mb-6"
-          >
-            <FontAwesome name="phone" size={24} color={iconColor} />
-            <View className="h-14 items-center justify-center px-2 w-28 max-w-28">
-              <FloatingLabelInput
-                label=""
-                editable={false}
-                value={country ? `+${country.callingCode}` : callingCode}
-                onChangeText={(text) => {
-                  setCallingCode(text)
+          {/* Phone Input with Country Code */}
+          <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 20 }}>
+            <Feather name="phone" size={22} color={iconColor} style={{ marginRight: 20, marginTop: 14 }} />
+            <View style={{ flex: 1 }}>
+              {/* Country dropdown */}
+              <Pressable
+                onPress={() => setShow(true)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  borderBottomWidth: 1,
+                  borderBottomColor: inputBorder,
+                  paddingVertical: 8,
+                  marginBottom: 12,
                 }}
-                inputStyles={{ color: inputColor }}
-              />
-            </View>
-            <View className="flex-1 h-14">
-              <FloatingLabelInput
-                label="Mobile"
-                inputMode="tel"
-                value={phoneNo}
-                onChangeText={(text) => setPhoneNo(text)}
-                customLabelStyles={{
-                  colorFocused: focusColor,
-                  colorBlurred: labelColor,
-                }}
-                labelStyles={{ color: labelColor }}
-                inputStyles={{ color: inputColor }}
-              />
-            </View>
-          </Animated.View>
+              >
+                <CountryPicker
+                  countryCode={countryCode}
+                  withFilter
+                  withFlag
+                  withCountryNameButton
+                  withCallingCode
+                  visible={show}
+                  onClose={() => setShow(false)}
+                  onSelect={(c) => {
+                    setCountryCode(c.cca2)
+                    setCountry(c)
+                    setShow(false)
+                  }}
+                />
+                <Feather name="chevron-down" size={16} color={secondaryText} />
+              </Pressable>
 
-          {/* Save Button */}
-          <Animated.View entering={FadeInDown.delay(500).springify()}>
-            <Pressable
-              className="h-14 items-center justify-center rounded-2xl"
-              style={{
-                backgroundColor: "rgba(74, 222, 128, 0.95)",
-                borderWidth: 1,
-                borderColor: glassBorder,
-                shadowColor: "#4ADE80",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.4,
-                shadowRadius: 12,
-                elevation: 6,
-              }}
-              onPress={() => {
-                const firstNameValid = validateFirstName(firstName)
-                const lastNameValid = validateLastName(lastName)
-                const countryCodeValid = validateCountryCode(callingCode)
-                const phoneNoValid = validatePhoneNo(phoneNo)
-
-                if (firstNameValid) {
-                  Toast.show({
-                    type: ALERT_TYPE.WARNING,
-                    title: "Warning",
-                    textBody: firstNameValid,
-                  })
-                } else if (lastNameValid) {
-                  Toast.show({
-                    type: ALERT_TYPE.WARNING,
-                    title: "Warning",
-                    textBody: lastNameValid,
-                  })
-                } else if (countryCodeValid) {
-                  Toast.show({
-                    type: ALERT_TYPE.WARNING,
-                    title: "Warning",
-                    textBody: countryCodeValid,
-                  })
-                } else if (phoneNoValid) {
-                  Toast.show({
-                    type: ALERT_TYPE.WARNING,
-                    title: "Warning",
-                    textBody: phoneNoValid,
-                  })
-                } else {
-                  sendData()
-                }
-              }}
-            >
-              <Text className="font-bold text-lg text-white">Save Contact</Text>
-            </Pressable>
-          </Animated.View>
+              {/* Phone number */}
+              <View style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: inputBorder, paddingBottom: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: "600", color: primaryText, marginRight: 10 }}>
+                  {country ? `+${country.callingCode}` : callingCode}
+                </Text>
+                <TextInput
+                  inputMode="tel"
+                  style={{ flex: 1, fontSize: 16, color: primaryText, fontWeight: "500" }}
+                  value={phoneNo}
+                  onChangeText={setPhoneNo}
+                  placeholder="Phone"
+                  placeholderTextColor={secondaryText}
+                />
+              </View>
+            </View>
+          </View>
         </View>
-      </Animated.View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   )
 }

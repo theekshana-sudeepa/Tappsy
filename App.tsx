@@ -16,11 +16,14 @@ import { WebSocketProvider } from "./src/socket/WebSocketProvider";
 import NewChatScreen from "./src/screens/NewChatScreen";
 import NewContactScreen from "./src/screens/NewContactScreen";
 import { useWebSocketPing } from "./src/socket/UseWebSocketPing";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { NativeModules } from "react-native";
 import { AuthContext, AuthProvider } from "./src/components/AuthProvider";
 import HomeTabs from "./src/screens/HomeTab";
 import SettingScreen from "./src/screens/SettingsScreen";
 import SignOutScreen from "./src/screens/SignOutScreen";
+import StatusScreen from "./src/screens/StatusScreen";
+import CallsScreen from "./src/screens/CallsScreen";
 
 
 export type RootStack = {
@@ -41,88 +44,116 @@ export type RootStack = {
   NewChatScreen: undefined;
   NewContactScreen: undefined;
   SignOutScreen: undefined;
+  StatusScreen: undefined;
+  CallsScreen: undefined;
 };
+
+const CURRENT_SCREEN: keyof RootStack = "HomeScreen";
+const FORCE_THEME: "light" | "dark" = "light";
 
 const Stack = createNativeStackNavigator<RootStack>();
 
 function ChatApp() {
   const auth = useContext(AuthContext);
 
+  useEffect(() => {
+    try {
+      if (NativeModules.ExponentKernel) {
+        NativeModules.ExponentKernel.setIsOnboardingFinishedAsync?.(true);
+        NativeModules.ExponentKernel.requestToCloseDevMenu?.();
+      }
+      if (NativeModules.DevMenu) {
+        NativeModules.DevMenu.closeMenu?.();
+        NativeModules.DevMenu.setIsOnboardingFinished?.(true);
+      }
+      if (NativeModules.ExpoDevMenu) {
+        NativeModules.ExpoDevMenu.closeMenu?.();
+      }
+    } catch (e) {}
+  }, []);
+
   return (
     <WebSocketProvider userId={auth ? Number(auth.userId) : 0}>
-      <ThemeProvider>
+      <ThemeProvider forceTheme={FORCE_THEME}>
         <UserRegistrationProvider>
-          <NavigationContainer>
+          <NavigationContainer key={`${CURRENT_SCREEN}_${FORCE_THEME}`}>
             <Stack.Navigator
-              initialRouteName="SplashScreen"
+              key={`${CURRENT_SCREEN}_${FORCE_THEME}`}
+              initialRouteName={CURRENT_SCREEN}
               screenOptions={{
                 animation: "fade",
               }}
             >
-              {auth?.isLoading ? (
-                <Stack.Screen
-                  name="SplashScreen"
-                  component={SplashScreen}
-                  options={{ headerShown: false }}
-                />
-              ) : auth?.userId === null ? (
-                // User not sign up
-                <Stack.Group>
-                  <Stack.Screen
-                    name="SignUpScreen"
-                    component={SignUpScreen}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="ContactScreen"
-                    component={ContactScreen}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="AvatarScreen"
-                    component={AvatarScreen}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="SignInScreen"
-                    component={SignInScreen}
-                    options={{ headerShown: false }}
-                  />
-                </Stack.Group>
-              ) : (
-                // When user sign up completed
-                <Stack.Group>
-                  <Stack.Screen
-                    name="HomeScreen"
-                    component={HomeTabs}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="SingleChatScreen"
-                    component={SingleChatScreen}
-                  />
-                  <Stack.Screen
-                    name="ProfileScreen"
-                    component={ProfileScreen}
-                  />
-                  <Stack.Screen
-                    name="SettingScreen"
-                    component={SettingScreen}
-                  />
-                  <Stack.Screen
-                    name="NewChatScreen"
-                    component={NewChatScreen}
-                  />
-                  <Stack.Screen
-                    name="NewContactScreen"
-                    component={NewContactScreen}
-                  />
-                  <Stack.Screen
-                    name="SignOutScreen"
-                    component={SignOutScreen}
-                  />
-                </Stack.Group>
-              )}
+              <Stack.Screen
+                name="ContactScreen"
+                component={ContactScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SignUpScreen"
+                component={SignUpScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AvatarScreen"
+                component={AvatarScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SignInScreen"
+                component={SignInScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="HomeScreen"
+                component={HomeTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SingleChatScreen"
+                component={SingleChatScreen}
+                options={{ headerShown: false }}
+                initialParams={{
+                  chatId: 101,
+                  friendName: "Shenali Fernando",
+                  lastSeenTime: "Today, 10:30 AM",
+                  profileImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200",
+                }}
+              />
+              <Stack.Screen
+                name="ProfileScreen"
+                component={ProfileScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SettingScreen"
+                component={SettingScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="NewChatScreen"
+                component={NewChatScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="NewContactScreen"
+                component={NewContactScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="StatusScreen"
+                component={StatusScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="CallsScreen"
+                component={CallsScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SignOutScreen"
+                component={SignOutScreen}
+              />
             </Stack.Navigator>
           </NavigationContainer>
         </UserRegistrationProvider>

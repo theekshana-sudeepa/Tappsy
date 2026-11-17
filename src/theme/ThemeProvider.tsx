@@ -15,9 +15,9 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children, forceTheme }: { children: React.ReactNode; forceTheme?: "light" | "dark" }) {
   const [preferenceState, setPreferenceState] = useState<ThemeOption>("system")
-  const [appliedTheme, setAppliedTheme] = useState<"light" | "dark">("light")
+  const [appliedTheme, setAppliedTheme] = useState<"light" | "dark">("dark")
   const [isInitialized, setIsInitialized] = useState(false)
 
   const getSystemTheme = (): "light" | "dark" => {
@@ -29,20 +29,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem(THEME_KEY)
-        console.log("Saved theme preference:", savedTheme)
-
-        if (savedTheme === "light" || savedTheme === "dark") {
-          setPreferenceState(savedTheme)
-          setAppliedTheme(savedTheme)
-          console.log("Applied saved theme:", savedTheme)
-        } else {
-          // Use system theme
-          const systemTheme = getSystemTheme()
-          setPreferenceState("system")
-          setAppliedTheme(systemTheme)
-          console.log("Applied system theme:", systemTheme)
-        }
+        const systemTheme = getSystemTheme()
+        setPreferenceState("system")
+        setAppliedTheme(systemTheme)
+        console.log("Applied system theme:", systemTheme)
       } catch (error) {
         console.error("Theme initialization error:", error)
         const systemTheme = getSystemTheme()
@@ -108,8 +98,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeContext.Provider
       value={{
-        preference: preferenceState,
-        applied: appliedTheme,
+        preference: forceTheme || preferenceState,
+        applied: forceTheme || appliedTheme,
         setPreference,
       }}
     >
