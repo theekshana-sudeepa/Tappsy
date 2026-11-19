@@ -1,12 +1,16 @@
 {
-  "name": "chatapp",
+  "name": "tappsy",
   "version": "1.0.0",
+  "description": "Real-time cross-platform mobile messaging app built with React Native (Expo), TypeScript, NativeWind, and Java EE WebSockets.",
+  "author": "Theekshana Sudeepa",
+  "license": "MIT",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -39,6 +43,5 @@
     "@types/react": "~19.1.0",
     "babel-preset-expo": "^54.0.1",
     "typescript": "~5.9.2"
-  },
-  "private": true
+  }
 }
