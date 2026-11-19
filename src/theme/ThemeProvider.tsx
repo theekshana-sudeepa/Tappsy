@@ -29,10 +29,15 @@ export function ThemeProvider({ children, forceTheme }: { children: React.ReactN
   useEffect(() => {
     const initializeTheme = async () => {
       try {
-        const systemTheme = getSystemTheme()
-        setPreferenceState("system")
-        setAppliedTheme(systemTheme)
-        console.log("Applied system theme:", systemTheme)
+        const savedTheme = await AsyncStorage.getItem(THEME_KEY)
+        if (savedTheme === "light" || savedTheme === "dark") {
+          setPreferenceState(savedTheme)
+          setAppliedTheme(savedTheme)
+        } else {
+          const systemTheme = getSystemTheme()
+          setPreferenceState("system")
+          setAppliedTheme(systemTheme)
+        }
       } catch (error) {
         console.error("Theme initialization error:", error)
         const systemTheme = getSystemTheme()
