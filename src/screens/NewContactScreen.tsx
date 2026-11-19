@@ -34,9 +34,9 @@ export default function NewContactScreen() {
   const [country, setCountry] = useState<Country | null>(null)
   const [show, setShow] = useState<boolean>(false)
   const [callingCode, setCallingCode] = useState("+94")
-  const [firstName, setFirstName] = useState("Shenali")
-  const [lastName, setLastName] = useState("Fernando")
-  const [phoneNo, setPhoneNo] = useState("772345678")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [phoneNo, setPhoneNo] = useState("")
 
   const newContact = useSendNewContact()
   const sendNewContact = newContact.sendNewContact

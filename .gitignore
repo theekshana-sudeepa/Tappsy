@@ -1,6 +1,4 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Dependencies
 node_modules/
 
 # Expo
@@ -9,33 +7,67 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Environment variables (block all .env files except .env.example)
+.env
+.env.*
+!.env.example
+
+# Native & Signing Secrets
 .kotlin/
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
+*.pem
+*.keystore
 *.mobileprovision
 
-# Metro
-.metro-health-check*
+# Generated native folders
+/ios
+/android
 
-# debug
+# Metro & Build artifacts
+.metro-health-check*
+build/
+target/
+*.tsbuildinfo
+
+# Debug logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macOS
+# IDE & Editor metadata
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS / OS files
 .DS_Store
-*.pem
+Thumbs.db
 
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android
+# Local personal & marketing showcase assets (kept local, excluded from public repo)
+screenshots/Tappsy_Dual_Platform_Showcase.pdf
+screenshots/tappsy_linkedin_hook_hero.png
+screenshots/slides/
+screenshots/mockups/
+screenshots/0*.png
+screenshots/1*.png
+screenshots/ios/ios_01_SignUp_Screen.png
+screenshots/ios/ios_02_SignIn_Screen.png
+screenshots/ios/ios_03_Contact_Screen.png
+screenshots/ios/ios_06_SingleChat_Screen.png
+screenshots/ios/ios_09_Settings_Screen_Light.png
+screenshots/ios/ios_10_Settings_Screen_Dark.png
+screenshots/ios/ios_12_SingleChat_Screen_Dark.png
+screenshots/ios/ios_15_Profile_Screen.png
+screenshots/android/01_SignUp_Screen.png
+screenshots/android/02_SignIn_Screen.png
+screenshots/android/03_Contact_Screen.png
+screenshots/android/06_SingleChat_Screen.png
+screenshots/android/09_Settings_Screen_Light.png
+screenshots/android/10_Settings_Screen_Dark.png
+screenshots/android/12_SingleChat_Screen_Dark.png
+screenshots/android/15_Profile_Screen.png

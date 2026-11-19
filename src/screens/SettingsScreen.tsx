@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import type { RootStack } from "../../App"
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
+import { useUserProfile } from "../socket/UseUserProfile"
 
 const options: ThemeOption[] = ["light", "dark", "system"]
 type SettingScreenProp = NativeStackNavigationProp<RootStack, "SettingScreen">
@@ -12,6 +13,10 @@ type SettingScreenProp = NativeStackNavigationProp<RootStack, "SettingScreen">
 export default function SettingScreen() {
   const { preference, applied, setPreference } = useTheme()
   const navigation = useNavigation<SettingScreenProp>()
+  const userProfile = useUserProfile()
+  const displayName = userProfile
+    ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
+    : "Alex Morgan"
   const isDark = applied === "dark"
 
   // Tappsy Theme Palette (WhatsApp Structure + Tappsy Theme)
@@ -112,7 +117,7 @@ export default function SettingScreen() {
             />
             <View style={{ flex: 1, marginLeft: 16 }}>
               <Text style={{ fontSize: 18, fontWeight: "700", color: primaryText }}>
-                Theekshana Sudeepa
+                {displayName}
               </Text>
               <Text style={{ fontSize: 14, color: secondaryText, marginTop: 2 }} numberOfLines={1}>
                 Crafting real-time mobile experiences 🚀

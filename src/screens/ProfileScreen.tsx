@@ -6,6 +6,7 @@ import { useTheme } from "../theme/ThemeProvider"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { useState } from "react"
+import { useUserProfile } from "../socket/UseUserProfile"
 
 type ProfileScreenProp = NativeStackNavigationProp<RootStack, "ProfileScreen">
 
@@ -24,7 +25,14 @@ export default function ProfileScreen() {
   const iconColor = isDark ? "#94A3B8" : "#64748B"
   const dividerColor = isDark ? "#1E293B" : "#F1F5F9"
 
+  const userProfile = useUserProfile()
   const [image] = useState<string>("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400")
+  const displayName = userProfile
+    ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
+    : "Alex Morgan"
+  const displayPhone = userProfile
+    ? `${userProfile.countryCode} ${userProfile.contactNo}`.trim()
+    : "+94 77 000 0000"
 
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
@@ -110,7 +118,7 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
               </View>
               <Text style={{ fontSize: 16, fontWeight: "700", color: primaryText, marginTop: 4 }}>
-                Theekshana Sudeepa
+                {displayName}
               </Text>
               <Text style={{ fontSize: 12, color: secondaryText, marginTop: 6, lineHeight: 17 }}>
                 This is not your username or pin. This name will be visible to your Tappsy contacts.
@@ -156,7 +164,7 @@ export default function ProfileScreen() {
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 13, color: secondaryText, fontWeight: "500" }}>Phone</Text>
               <Text style={{ fontSize: 15, fontWeight: "600", color: primaryText, marginTop: 4 }}>
-                +94 77 123 4567
+                {displayPhone}
               </Text>
             </View>
           </View>

@@ -27,8 +27,8 @@ export default function SignInScreen() {
   const secondaryText = isDark ? "#94A3B8" : "#64748B"
   const lineBlue = isDark ? "#38BDF8" : tappsyBlue
 
-  const [emailOrPhone, setEmailOrPhone] = useState("+94 77 123 4567")
-  const [pin, setPin] = useState("2468")
+  const [emailOrPhone, setEmailOrPhone] = useState("")
+  const [pin, setPin] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSignIn = async () => {
@@ -129,7 +129,7 @@ export default function SignInScreen() {
                   style={{ fontSize: 16, color: primaryText, fontWeight: "600", marginTop: 4 }}
                   value={emailOrPhone}
                   onChangeText={setEmailOrPhone}
-                  placeholder="+94 77 123 4567"
+                  placeholder="+94 77 000 0000"
                   placeholderTextColor={secondaryText}
                 />
               </View>

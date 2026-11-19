@@ -34,8 +34,8 @@ export default function ContactScreen() {
   const { setUserData } = useUserRegistration()
 
   const [callingCode] = useState("+94")
-  const [phoneNo, setPhoneNo] = useState("771234567")
-  const [pin, setPin] = useState("1234")
+  const [phoneNo, setPhoneNo] = useState("")
+  const [pin, setPin] = useState("")
 
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
@@ -112,7 +112,7 @@ export default function ContactScreen() {
                   <TextInput
                     inputMode="tel"
                     style={{ fontSize: 17, fontWeight: "600", color: primaryText }}
-                    placeholder="77 123 4567"
+                    placeholder="77 000 0000"
                     placeholderTextColor={secondaryText}
                     value={phoneNo}
                     onChangeText={setPhoneNo}

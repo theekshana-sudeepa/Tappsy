@@ -48,7 +48,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
       friendId: chatId,
       friendName: friendName,
       friendFirstName: friendName.split(" ")[0],
-      lastMessage: "Hey Theekshana! How's the Tappsy mobile project coming along?",
+      lastMessage: "Hey! How's the Tappsy mobile project coming along?",
       lastTimeStamp: new Date(Date.now() - 1000 * 60 * 6).toISOString(),
       unreadCount: 0,
       profileImage: profileImage,
@@ -57,7 +57,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
       createdAt: new Date(Date.now() - 1000 * 60 * 6).toISOString(),
       updatedAt: "",
       status: "ONLINE",
-      message: "Hey Theekshana! How's the Tappsy mobile project coming along?"
+      message: "Hey! How's the Tappsy mobile project coming along?"
     },
     {
       id: 2,

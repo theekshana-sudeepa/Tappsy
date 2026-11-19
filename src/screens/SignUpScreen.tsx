@@ -26,8 +26,8 @@ export default function SignUpScreen() {
   const lineBlue = isDark ? "#38BDF8" : tappsyBlue
 
   const { userData, setUserData } = useUserRegistration()
-  const [firstName, setFirstName] = useState(userData.firstName || "Theekshana")
-  const [lastName, setLastName] = useState(userData.lastName || "Sudeepa")
+  const [firstName, setFirstName] = useState(userData.firstName || "")
+  const [lastName, setLastName] = useState(userData.lastName || "")
 
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
